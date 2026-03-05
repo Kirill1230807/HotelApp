@@ -1,5 +1,6 @@
 package com.example.hotelapp.presentation.screens.search
 
+import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hotelapp.presentation.components.search.SearchRow
+import com.example.hotelapp.presentation.theme.AdditionalColor
 import com.example.hotelapp.presentation.theme.MainColor
 
 @Composable
@@ -67,10 +69,16 @@ fun HotelSearchCard() {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(28.dp),
+                        tint = AdditionalColor
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Знайти готелі", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Знайти готелі",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = AdditionalColor
+                    )
                 }
             }
         }

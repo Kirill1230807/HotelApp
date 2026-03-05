@@ -1,5 +1,6 @@
 package com.example.hotelapp.data.repositoryImp
 
+import com.example.hotelapp.R
 import com.example.hotelapp.domain.model.Hotel
 import com.example.hotelapp.domain.reposityry.HotelRepository
 import com.example.hotelapp.util.Amenity
@@ -19,7 +20,7 @@ class HotelRepositoryImp : HotelRepository {
                 reviewCount = 56,
                 pricePerNight = 2500.0,
                 currency = "UAH",
-                imageUrls = listOf("R.drawable"),
+                imageUrls = listOf(R.drawable.hotel, R.drawable.hotel1, R.drawable.hotel2),
                 amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI),
                 coordinates = ""
             ),
@@ -33,7 +34,7 @@ class HotelRepositoryImp : HotelRepository {
                 reviewCount = 56,
                 pricePerNight = 2500.0,
                 currency = "UAH",
-                imageUrls = listOf("R.drawable"),
+                imageUrls = listOf(R.drawable.hotel1, R.drawable.hotel2, R.drawable.hotel),
                 amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI),
                 coordinates = ""
             ),
@@ -47,7 +48,7 @@ class HotelRepositoryImp : HotelRepository {
                 reviewCount = 56,
                 pricePerNight = 2500.0,
                 currency = "UAH",
-                imageUrls = listOf("R.drawable"),
+                imageUrls = listOf(R.drawable.hotel2, R.drawable.hotel, R.drawable.hotel1),
                 amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI),
                 coordinates = ""
             )
