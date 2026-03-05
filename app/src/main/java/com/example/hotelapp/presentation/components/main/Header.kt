@@ -13,8 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.example.hotelapp.presentation.theme.AdditionalColor
-import com.example.hotelapp.presentation.theme.MainColor
+import com.example.hotelapp.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

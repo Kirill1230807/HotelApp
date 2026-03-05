@@ -13,7 +13,7 @@ data class Hotel(
     val reviewCount: Int,
     val pricePerNight: Double,
     val currency : String = "UAH",
-    val imageUrls: List<String>,
+    val imageUrls: List<Int>,
     val amenities: List<Amenity>,
     val coordinates: String
 )
