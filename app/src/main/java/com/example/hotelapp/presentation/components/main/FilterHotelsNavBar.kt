@@ -50,7 +50,6 @@ fun SortDropdownMenu(
     Box(
         modifier = Modifier
             .wrapContentSize(Alignment.TopStart)
-            .padding(16.dp)
     ) {
         Row(
             modifier = Modifier
@@ -93,7 +92,7 @@ fun SortDropdownMenu(
                     colors = MenuDefaults.itemColors(
                         textColor = Color.Black,
 
-                    )
+                        )
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.example.hotelapp.presentation.screens.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,65 +50,76 @@ fun MainScreen(
 
 @Composable
 fun MainScreenContent(uiState: HotelUIState) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val blueBackgroundHeight = screenHeight / 3.5f
+
+
     Scaffold(
         topBar = { Header() }
     ) { innerPadding ->
-        Box(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .drawBehind {
-                    drawRect(color = Color.White)
-                    drawRect(
-                        color = MainColor,
-                        size = Size(size.width, size.height / 3.5f)
-                    )
-                }
+                .background(color = AdditionalColor),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                item {
-                    Spacer(Modifier.height(20.dp))
-                    HotelSearchCard()
-                    Spacer(Modifier.height(16.dp))
+            item {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(blueBackgroundHeight)
+                            .background(MainColor)
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Spacer(Modifier.height(20.dp))
+                        HotelSearchCard()
+                        Spacer(Modifier.height(16.dp))
+                    }
+                }
+
+                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                     SortDropdownMenu(onSortSelected = {})
                 }
 
-                when (uiState) {
-                    is HotelUIState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(32.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = MainColor)
-                            }
+            }
+
+            when (uiState) {
+                is HotelUIState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = MainColor)
                         }
                     }
+                }
 
-                    is HotelUIState.Success -> {
-                        items(uiState.hotels) { hotel ->
-                            HotelCard(hotel = hotel)
-                        }
+                is HotelUIState.Success -> {
+                    items(uiState.hotels) { hotel ->
+                        HotelCard(hotel = hotel)
                     }
+                }
 
-                    is HotelUIState.Error -> {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(32.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = uiState.message,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
+                is HotelUIState.Error -> {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = uiState.message,
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }
