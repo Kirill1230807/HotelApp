@@ -20,8 +20,8 @@ class HotelRepositoryImp : HotelRepository {
                 reviewCount = 56,
                 pricePerNight = 2500.0,
                 currency = "UAH",
-                imageUrls = listOf(R.drawable.hotel, R.drawable.hotel1, R.drawable.hotel2),
-                amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI),
+                imageUrls = listOf(R.drawable.hotel, R.drawable.hotel1, R.drawable.hotel2, R.drawable.hotel1),
+                amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI, Amenity.PARKING),
                 coordinates = ""
             ),
             Hotel(
@@ -34,8 +34,8 @@ class HotelRepositoryImp : HotelRepository {
                 reviewCount = 56,
                 pricePerNight = 2500.0,
                 currency = "UAH",
-                imageUrls = listOf(R.drawable.hotel1, R.drawable.hotel2, R.drawable.hotel),
-                amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI),
+                imageUrls = listOf(R.drawable.hotel1, R.drawable.hotel1, R.drawable.hotel2, R.drawable.hotel),
+                amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI, Amenity.BREAKFAST),
                 coordinates = ""
             ),
             Hotel(
@@ -49,7 +49,8 @@ class HotelRepositoryImp : HotelRepository {
                 pricePerNight = 2500.0,
                 currency = "UAH",
                 imageUrls = listOf(R.drawable.hotel2, R.drawable.hotel, R.drawable.hotel1),
-                amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI),
+                amenities = listOf(Amenity.RESTAURANT, Amenity.WI_FI, Amenity.SWIMMING_POOL,
+                    Amenity.BREAKFAST),
                 coordinates = ""
             )
         )
