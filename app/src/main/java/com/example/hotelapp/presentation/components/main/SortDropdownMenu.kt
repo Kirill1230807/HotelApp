@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SortDropdownMenu(
+    selectedOption: String,
     onSortSelected: (String) -> Unit
 ) {
     val sortOptions = listOf(
@@ -45,7 +45,6 @@ fun SortDropdownMenu(
 
     var expanded by remember { mutableStateOf(false) }
 
-    var selectedOption by remember { mutableStateOf(sortOptions[0]) }
 
     Box(
         modifier = Modifier
@@ -85,7 +84,6 @@ fun SortDropdownMenu(
                         )
                     },
                     onClick = {
-                        selectedOption = option
                         expanded = false
                         onSortSelected(option)
                     },
@@ -102,5 +100,5 @@ fun SortDropdownMenu(
 @Preview(showSystemUi = true)
 @Composable
 private fun SortDropdownMenuPreview() {
-    SortDropdownMenu(onSortSelected = {})
+    SortDropdownMenu(onSortSelected = {}, selectedOption = "")
 }
