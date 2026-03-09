@@ -41,10 +41,15 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedSortOption by viewModel.selectedSortOption.collectAsState()
+
+    val favouriteHotelIds by viewModel.favouriteHotelState.collectAsState()
+
     MainScreenContent(
         uiState = uiState,
         onSortSelected = { option -> viewModel.onSortOptionSelected(option) },
-        selectedSortOption = selectedSortOption
+        selectedSortOption = selectedSortOption,
+        favouriteHotelIds = favouriteHotelIds,
+        onFavouriteClick = { hotelId -> viewModel.onFavourite(hotelId) }
     )
 }
 
@@ -52,7 +57,9 @@ fun MainScreen(
 fun MainScreenContent(
     uiState: HotelUIState,
     onSortSelected: (String) -> Unit,
-    selectedSortOption: String
+    selectedSortOption: String,
+    favouriteHotelIds: Set<Int>,
+    onFavouriteClick: (Int) -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -110,7 +117,12 @@ fun MainScreenContent(
 
                 is HotelUIState.Success -> {
                     items(uiState.hotels) { hotel ->
-                        HotelCard(hotel = hotel)
+                        val isFav = favouriteHotelIds.contains(hotel.id)
+                        HotelCard(
+                            hotel = hotel,
+                            isFavourite = isFav,
+                            onFavouriteClick = { onFavouriteClick(hotel.id) },
+                        )
                     }
                 }
 
@@ -184,6 +196,8 @@ fun MainScreenPreview() {
     MainScreenContent(
         uiState = HotelUIState.Success(mockHotels),
         onSortSelected = { },
-        selectedSortOption = "Рекомендовані"
+        selectedSortOption = "Рекомендовані",
+        favouriteHotelIds = emptySet(),
+        onFavouriteClick = {  }
     )
 }
