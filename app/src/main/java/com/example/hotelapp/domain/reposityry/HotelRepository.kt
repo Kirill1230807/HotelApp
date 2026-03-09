@@ -4,5 +4,4 @@ import com.example.hotelapp.domain.model.Hotel
 
 interface HotelRepository {
     suspend fun getAllHotels(): List<Hotel>
-    suspend fun filterHotelsByPrice(): List<Hotel>
 }

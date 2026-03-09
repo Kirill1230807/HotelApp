@@ -39,8 +39,7 @@ fun SortDropdownMenu(
         "Рекомендовані",
         "Ціна: від низької",
         "Ціна: від високої",
-        "За рейтингом",
-        "За зірками"
+        "За рейтингом"
     )
 
     var expanded by remember { mutableStateOf(false) }
@@ -100,5 +99,5 @@ fun SortDropdownMenu(
 @Preview(showSystemUi = true)
 @Composable
 private fun SortDropdownMenuPreview() {
-    SortDropdownMenu(onSortSelected = {}, selectedOption = "")
+    SortDropdownMenu(onSortSelected = {}, selectedOption = "Рекомендовані")
 }
