@@ -24,11 +24,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.hotelapp.R
 import com.example.hotelapp.domain.model.Hotel
 import com.example.hotelapp.presentation.components.hotelCard.HotelCard
 import com.example.hotelapp.presentation.components.main.Header
 import com.example.hotelapp.presentation.components.main.SortDropdownMenu
+import com.example.hotelapp.presentation.navigation.Screen
 import com.example.hotelapp.presentation.screens.search.HotelSearchCard
 import com.example.hotelapp.presentation.theme.*
 import com.example.hotelapp.presentation.viewmodel.HotelListViewModel
@@ -37,7 +40,8 @@ import com.example.hotelapp.util.HotelUIState
 
 @Composable
 fun MainScreen(
-    viewModel: HotelListViewModel = viewModel()
+    viewModel: HotelListViewModel = viewModel(),
+    navController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedSortOption by viewModel.selectedSortOption.collectAsState()
@@ -49,7 +53,8 @@ fun MainScreen(
         onSortSelected = { option -> viewModel.onSortOptionSelected(option) },
         selectedSortOption = selectedSortOption,
         favouriteHotelIds = favouriteHotelIds,
-        onFavouriteClick = { hotelId -> viewModel.onFavourite(hotelId) }
+        onHotelFavouriteClick = { hotelId -> viewModel.onFavourite(hotelId) },
+        onFavouriteClick = { navController.navigate("favourites") },
     )
 }
 
@@ -59,15 +64,15 @@ fun MainScreenContent(
     onSortSelected: (String) -> Unit,
     selectedSortOption: String,
     favouriteHotelIds: Set<Int>,
-    onFavouriteClick: (Int) -> Unit
+    onHotelFavouriteClick: (Int) -> Unit,
+    onFavouriteClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val blueBackgroundHeight = screenHeight / 3.5f
 
-
     Scaffold(
-        topBar = { Header() }
+        topBar = { Header(onFavouriteClick = onFavouriteClick) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -121,7 +126,7 @@ fun MainScreenContent(
                         HotelCard(
                             hotel = hotel,
                             isFavourite = isFav,
-                            onFavouriteClick = { onFavouriteClick(hotel.id) },
+                            onFavouriteClick = { onHotelFavouriteClick(hotel.id) },
                         )
                     }
                 }
@@ -148,7 +153,7 @@ fun MainScreenContent(
 
 @Preview(showSystemUi = true)
 @Composable
-fun MainScreenPreview() {
+private fun MainScreenPreview() {
     val mockHotels = listOf(
         Hotel(
             id = 1,
@@ -198,6 +203,7 @@ fun MainScreenPreview() {
         onSortSelected = { },
         selectedSortOption = "Рекомендовані",
         favouriteHotelIds = emptySet(),
-        onFavouriteClick = {  }
+        onHotelFavouriteClick = { },
+        onFavouriteClick = {}
     )
 }
