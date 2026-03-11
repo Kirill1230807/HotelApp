@@ -4,16 +4,24 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.hotelapp.data.local.FavouriteHotelDao
+import com.example.hotelapp.data.local.FavouriteHotelEntity
 import com.example.hotelapp.data.repositoryImp.HotelRepositoryImp
 import com.example.hotelapp.domain.model.Hotel
 import com.example.hotelapp.domain.reposityry.HotelRepository
 import com.example.hotelapp.util.HotelUIState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class HotelListViewModel(
-    private val repository: HotelRepository = HotelRepositoryImp()
+    private val repository: HotelRepository = HotelRepositoryImp(),
+    private val favouriteDao: FavouriteHotelDao
 ) : ViewModel() {
     /** Стан екрану private (доступний тільки у ViewModel). **/
     private val _uiState = MutableStateFlow<HotelUIState>(HotelUIState.Loading)
@@ -27,8 +35,8 @@ class HotelListViewModel(
     /** Стан сортування (доступний в екрані, який доступний йому). **/
     val selectedSortOption: StateFlow<String> = _selectedSortOption
 
-    private val _favouriteHotelState = MutableStateFlow<Set<Int>>(emptySet())
-    val favouriteHotelState: StateFlow<Set<Int>> = _favouriteHotelState
+//    private val _favouriteHotelState = MutableStateFlow<Set<Int>>(emptySet())
+//    val favouriteHotelState: StateFlow<Set<Int>> = _favouriteHotelState
 
     /** Блок init викликається, коли створюється екземпляр ViewModel. Викликає метод loadHotels(),
      * який завантажує список готелів. **/
@@ -64,13 +72,22 @@ class HotelListViewModel(
         }
     }
 
+    val favouriteHotelState: StateFlow<Set<Int>> = favouriteDao.getAllFavouriteIds()
+        .map { it.toSet() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptySet()
+        )
+
     fun onFavourite(hotelId: Int) {
-        val currentState = _favouriteHotelState.value.toMutableSet()
-        if (currentState.contains(hotelId)) {
-            currentState.remove(hotelId)
-        } else {
-            currentState.add(hotelId)
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = favouriteHotelState.value
+            if (currentState.contains(hotelId)) {
+                favouriteDao.deleteFavourite(FavouriteHotelEntity(hotelId))
+            } else {
+                favouriteDao.insertFavourite(FavouriteHotelEntity(hotelId))
+            }
         }
-        _favouriteHotelState.value = currentState
     }
 }
