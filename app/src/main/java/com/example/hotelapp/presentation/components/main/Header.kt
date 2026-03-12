@@ -17,24 +17,13 @@ import com.example.hotelapp.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Header(
-    onFavouriteClick: () -> Unit
-) {
+fun Header() {
     CenterAlignedTopAppBar(
         title = { Text("Готелі України", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
         navigationIcon = {
             IconButton(onClick = { /*something*/ }) {
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = null,
-                    tint = AdditionalColor
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = onFavouriteClick) {
-                Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
                     contentDescription = null,
                     tint = AdditionalColor
                 )
@@ -50,5 +39,5 @@ fun Header(
 @Preview(showBackground = true)
 @Composable
 fun HeaderPreview() {
-    Header(onFavouriteClick = {})
+    Header()
 }

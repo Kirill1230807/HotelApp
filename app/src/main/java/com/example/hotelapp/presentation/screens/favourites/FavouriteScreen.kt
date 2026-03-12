@@ -48,7 +48,6 @@ fun FavouriteScreen(
     FavouriteScreenContent(
         uiState = uiState,
         favouriteHotelIds = favourites,
-        onBackClick = { navController.popBackStack() },
         onFavouriteClick = { hotelId -> viewModel.onFavourite(hotelId) },
     )
 }
@@ -58,76 +57,53 @@ fun FavouriteScreen(
 fun FavouriteScreenContent(
     uiState: HotelUIState,
     favouriteHotelIds: Set<Int>,
-    onBackClick: () -> Unit,
     onFavouriteClick: (Int) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Збережені готелі", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
-                            tint = AdditionalColor
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MainColor,
-                    titleContentColor = AdditionalColor
-                )
-            )
+
+    when (uiState) {
+        is HotelUIState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = MainColor)
+            }
         }
-    ) { innerPadding ->
-        when (uiState) {
-            is HotelUIState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = MainColor)
-                }
+
+        is HotelUIState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(uiState.message, color = Color.Red)
+            }
+        }
+
+        is HotelUIState.Success -> {
+            val favouriteHotels = uiState.hotels.filter { hotel ->
+                favouriteHotelIds.contains(hotel.id)
             }
 
-            is HotelUIState.Error -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(uiState.message, color = Color.Red)
+            if (favouriteHotels.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(AdditionalColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "У вас поки немає збережених готелів",
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 }
-            }
-
-            is HotelUIState.Success -> {
-                val favouriteHotels = uiState.hotels.filter { hotel ->
-                    favouriteHotelIds.contains(hotel.id)
-                }
-
-                if (favouriteHotels.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .background(AdditionalColor),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "У вас поки немає збережених готелів",
-                            fontSize = 16.sp,
-                            color = Color.Gray
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(AdditionalColor),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(favouriteHotels) { hotel ->
+                        HotelCard(
+                            hotel = hotel,
+                            isFavourite = true,
+                            onFavouriteClick = { onFavouriteClick(hotel.id) }
                         )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .background(AdditionalColor),
-                        contentPadding = PaddingValues(bottom = 16.dp)
-                    ) {
-                        items(favouriteHotels) { hotel ->
-                            HotelCard(
-                                hotel = hotel,
-                                isFavourite = true,
-                                onFavouriteClick = { onFavouriteClick(hotel.id) }
-                            )
-                        }
                     }
                 }
             }
@@ -153,7 +129,6 @@ private fun FavouriteScreenPreview() {
     FavouriteScreenContent(
         uiState = HotelUIState.Success(mockHotels),
         favouriteHotelIds = setOf(1, 2),
-        onBackClick = { },
         onFavouriteClick = { }
     )
 }
