@@ -1,6 +1,5 @@
-package com.example.hotelapp.presentation.screens.search
+package com.example.hotelapp.presentation.components.main
 
-import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

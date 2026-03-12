@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,14 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.hotelapp.R
 import com.example.hotelapp.domain.model.Hotel
 import com.example.hotelapp.presentation.components.hotelCard.HotelCard
-import com.example.hotelapp.presentation.components.main.Header
 import com.example.hotelapp.presentation.components.main.SortDropdownMenu
-import com.example.hotelapp.presentation.navigation.Screen
-import com.example.hotelapp.presentation.screens.search.HotelSearchCard
+import com.example.hotelapp.presentation.components.main.HotelSearchCard
 import com.example.hotelapp.presentation.theme.*
 import com.example.hotelapp.presentation.viewmodel.HotelListViewModel
 import com.example.hotelapp.util.Amenity
@@ -54,7 +50,6 @@ fun MainScreen(
         selectedSortOption = selectedSortOption,
         favouriteHotelIds = favouriteHotelIds,
         onHotelFavouriteClick = { hotelId -> viewModel.onFavourite(hotelId) },
-        onFavouriteClick = { navController.navigate("favourites") },
     )
 }
 
@@ -64,86 +59,80 @@ fun MainScreenContent(
     onSortSelected: (String) -> Unit,
     selectedSortOption: String,
     favouriteHotelIds: Set<Int>,
-    onHotelFavouriteClick: (Int) -> Unit,
-    onFavouriteClick: () -> Unit
+    onHotelFavouriteClick: (Int) -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val blueBackgroundHeight = screenHeight / 3.5f
 
-    Scaffold(
-        topBar = { Header(onFavouriteClick = onFavouriteClick) }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(color = AdditionalColor),
-            contentPadding = PaddingValues(bottom = 16.dp)
-        ) {
-            item {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Spacer(
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = AdditionalColor),
+        contentPadding = PaddingValues(bottom = 16.dp)
+    ) {
+        item {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(blueBackgroundHeight)
+                        .background(MainColor)
+                )
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Spacer(Modifier.height(20.dp))
+                    HotelSearchCard()
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
+
+            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                SortDropdownMenu(
+                    onSortSelected = onSortSelected,
+                    selectedOption = selectedSortOption
+                )
+            }
+        }
+
+        when (uiState) {
+            is HotelUIState.Loading -> {
+                item {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(blueBackgroundHeight)
-                            .background(MainColor)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Spacer(Modifier.height(20.dp))
-                        HotelSearchCard()
-                        Spacer(Modifier.height(16.dp))
+                        CircularProgressIndicator(color = MainColor)
                     }
                 }
+            }
 
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    SortDropdownMenu(
-                        onSortSelected = onSortSelected,
-                        selectedOption = selectedSortOption
+            is HotelUIState.Success -> {
+                items(uiState.hotels) { hotel ->
+                    val isFav = favouriteHotelIds.contains(hotel.id)
+                    HotelCard(
+                        hotel = hotel,
+                        isFavourite = isFav,
+                        onFavouriteClick = { onHotelFavouriteClick(hotel.id) },
                     )
                 }
             }
 
-            when (uiState) {
-                is HotelUIState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = MainColor)
-                        }
-                    }
-                }
-
-                is HotelUIState.Success -> {
-                    items(uiState.hotels) { hotel ->
-                        val isFav = favouriteHotelIds.contains(hotel.id)
-                        HotelCard(
-                            hotel = hotel,
-                            isFavourite = isFav,
-                            onFavouriteClick = { onHotelFavouriteClick(hotel.id) },
+            is HotelUIState.Error -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = uiState.message,
+                            color = MaterialTheme.colorScheme.error
                         )
-                    }
-                }
-
-                is HotelUIState.Error -> {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = uiState.message,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
                     }
                 }
             }
@@ -204,6 +193,5 @@ private fun MainScreenPreview() {
         selectedSortOption = "Рекомендовані",
         favouriteHotelIds = emptySet(),
         onHotelFavouriteClick = { },
-        onFavouriteClick = {}
     )
 }
